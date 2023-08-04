@@ -46,7 +46,7 @@ public class GIXComponent<Model> {
         }
         data = file.readString();
         class_paths.addAll(
-                "org.winricklabs.gix.", // TODO Replace with gix path when lib done
+                "org.winricklabs.gix.",
                 "com.kotcrab.vis.ui.layout.",
                 "com.kotcrab.vis.ui.widget.",
                 "com.kotcrab.vis.ui.widget.spinner.",
