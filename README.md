@@ -109,7 +109,7 @@ public class TodoApp extends ApplicationAdapter {
 - Values `{like_this}` come from the passed in state. Expressions are not supported - only values. This keeps things simple and faster.
 - Table rows etc can be used via `<Table:row></Table:row>` notation.
 - `setState()` re-renders the whole component.
-- For more CPU-intensive work you can manipulate components directly by calling `getById()`.
+- For more CPU-intensive work you can manipulate components directly by calling `getById()` instead of `setState()` all the time. For example, for a large data table, you probably don't want to re-render the whole table when adding an item.
 
 ## Installation
 
