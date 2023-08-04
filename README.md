@@ -47,8 +47,7 @@ public class TodoComponent extends GIXComponent<TodoComponent.TodoState> {
 
     public TodoComponent(GIXParent parent) {
         super(parent, Gdx.files.internal("todo.html"));
-        TodoState state = new TodoState();
-        withState(state);
+        withState(new TodoState());
         parse();
     }
 
@@ -115,8 +114,7 @@ public class ChildComponent extends GIXComponent<ChildComponent.ChildState> {
 
     public ChildComponent(GIXParent parent) {
         super(parent, Gdx.files.internal("child.html"));
-        ChildState state = new ChildState();
-        withState(state);
+        withState(new ChildState());
         parse();
     }
 
