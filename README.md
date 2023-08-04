@@ -56,7 +56,9 @@ public class TodoComponent extends GIXComponent<TodoComponent.TodoState> {
         Array<Todo> todos = Array.with(new Todo("Buy Eggs"), new Todo("Write Java"));
         ClickListener addTodoListener = new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                todos.add(new Todo("Test"));
+                VisTextField field = ((VisTextField) getById("field"));
+                todos.add(new Todo(field.getText()));
+                field.setText("");
                 setState(TodoState.this);
             }
         };
