@@ -2,8 +2,11 @@ package org.winricklabs.gix;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
@@ -176,7 +179,7 @@ public class GIXComponent<Model> {
             // find loops, expand.
             gix_root.expandLoops();
 
-            System.out.println("parse time: " + (System.currentTimeMillis() - start));
+//            System.out.println("parse time: " + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
             Array<GIXNode> pending_actors_nodes = new Array<>(0);
             // we rarely need to store constructors on each node, so we use a separate map, vs the overhead of the property on every GSXNode.
@@ -270,14 +273,14 @@ public class GIXComponent<Model> {
 
         } catch (NodeException e) {
             // todo hard fail option
-            throw new RuntimeException(e.exception);
-//            Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.RED);
-//            e.node.wrap("<ERROR>" + e.exception.getMessage() + ":</ERROR>");
-//            Label label = new Label(e.node.root().outerHtml(), labelStyle);
-//            label.setFillParent(true);
-//            root = label;
+//            throw new RuntimeException(e.exception);
+            Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.RED);
+            e.node.wrap("<ERROR>" + e.exception.getMessage() + ":</ERROR>");
+            Label label = new Label(e.node.root().outerHtml(), labelStyle);
+            label.setFillParent(true);
+            root = label;
         }
-        System.out.println("step 2 time: " + (System.currentTimeMillis() - start));
+//        System.out.println("step 2 time: " + (System.currentTimeMillis() - start));
         parent.addOrReplace(tree);
         return this;
     }
