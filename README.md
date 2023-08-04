@@ -38,6 +38,10 @@ Let's write our template:
 </VisWindow>
 ```
 
+We're using `vis-ui` here but regular `Scene2D` components work too.
+
+Now let's write a corresponding class which will define the state passed to this template:
+
 ```java
 public class TodoComponent extends GIXComponent<TodoComponent.TodoState> {
 
