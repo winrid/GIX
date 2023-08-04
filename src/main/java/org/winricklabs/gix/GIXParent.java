@@ -15,6 +15,11 @@ public class GIXParent {
         this.stage = null;
     }
 
+    public GIXParent(GIXNode node) {
+        this.group = (WidgetGroup) node.ui_instance;
+        this.stage = null;
+    }
+
     public GIXParent(Stage stage) {
         this.group = null;
         this.stage = stage;

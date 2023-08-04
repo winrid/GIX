@@ -104,6 +104,32 @@ public class TodoApp extends ApplicationAdapter {
 }
 ```
 
+## Child Components
+
+Children work this way:
+
+```java
+public class ChildComponent extends GIXComponent<ChildComponent.ChildState> {
+
+    public ChildComponent(GIXParent parent) {
+        super(parent, Gdx.files.internal("child.html"));
+        ChildState state = new ChildState();
+        withState(state);
+        parse();
+    }
+
+    public ChildComponent(GIXNode parent) {
+        this(new GIXParent(parent));
+    }
+
+    public class ChildState {
+
+    }
+}
+```
+
+Now you can use `<ChildComponent></ChildComponent>` in the parent.
+
 ## How it Works
 
 - XHTML tags correspond to a Class.

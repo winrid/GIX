@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -26,14 +27,14 @@ import java.util.Iterator;
 
 // "gdx-in-html"
 
-public class GIXComponent<Model> {
+public class GIXComponent<Model> extends Actor {
     private static final Array<GIXComponent<?>> instances = new Array<>(); // for easy hot reloading api
     Array<String> class_paths = new Array<>(2);
     GIXParent parent;
     FileHandle file;
     FileHandle absolute_file_handle;
     String data;
-    Actor tree = null;
+    WidgetGroup tree = null;
     GIXNode gix_root = null;
     ObjectMap<String, Actor> actorsById = new ObjectMap<>();
     private static boolean dev_mode = false;
@@ -277,7 +278,9 @@ public class GIXComponent<Model> {
                 e.node.wrap("<ERROR>" + e.exception.getMessage() + ":</ERROR>");
                 Label label = new Label(e.node.root().outerHtml(), labelStyle);
                 label.setFillParent(true);
-                tree = label;
+                tree = new Table();
+                tree.setFillParent(true);
+                tree.addActor(label);
             } else {
                 throw new RuntimeException(e.exception);
             }
@@ -301,7 +304,7 @@ public class GIXComponent<Model> {
         node.setUIInstance(instance, actorsById);
         invokeSettersAndMethods(node, instance, node.attrs);
         if (tree == null) {
-            tree = (Actor) instance;
+            tree = (WidgetGroup) instance;
         } else if (add_to_parent) {
             addNodeToParent(node, instance);
         }
