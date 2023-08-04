@@ -272,13 +272,15 @@ public class GIXComponent<Model> {
             }
 
         } catch (NodeException e) {
-            // todo hard fail option
-//            throw new RuntimeException(e.exception);
-            Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.RED);
-            e.node.wrap("<ERROR>" + e.exception.getMessage() + ":</ERROR>");
-            Label label = new Label(e.node.root().outerHtml(), labelStyle);
-            label.setFillParent(true);
-            root = label;
+            if (dev_mode) {
+                Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.RED);
+                e.node.wrap("<ERROR>" + e.exception.getMessage() + ":</ERROR>");
+                Label label = new Label(e.node.root().outerHtml(), labelStyle);
+                label.setFillParent(true);
+                tree = label;
+            } else {
+                throw new RuntimeException(e.exception);
+            }
         }
 //        System.out.println("step 2 time: " + (System.currentTimeMillis() - start));
         parent.addOrReplace(tree);
