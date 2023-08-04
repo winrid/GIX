@@ -128,7 +128,7 @@ public class GIXComponent<Model> {
                     if (shouldSkipNode(node_name)) {
                         return;
                     }
-                    System.out.println("Entering tag: " + node.nodeName() + " " + depth);
+//                    System.out.println("Entering tag: " + node.nodeName() + " " + depth);
                     try {
                         GIXNode last_at_prev_depth = last_node_at_depth.get(depth - 1);
                         GIXNodeTarget gixNodeTarget = GIXNodeTarget.fromNodeName(last_at_prev_depth, node_name, class_paths);
@@ -231,12 +231,12 @@ public class GIXComponent<Model> {
                                 pending_node_constructors.put(node, matching_constructor);
                                 // TODO support root node as requiring actors
                             } else if (matching_constructor.requires_parent_gix_node) {
-                                System.out.printf("Calling %s \n", matching_constructor.constructor.getName());
+//                                System.out.printf("Calling %s \n", matching_constructor.constructor.getName());
                                 raw_values.insert(0, node.parent);
                                 Object instance = matching_constructor.constructor.newInstance(raw_values.toArray());
                                 addUINode(node, instance, false);
                             } else {
-                                System.out.printf("Calling %s \n", matching_constructor.constructor.getName());
+//                                System.out.printf("Calling %s \n", matching_constructor.constructor.getName());
                                 Object instance = matching_constructor.constructor.newInstance(raw_values.toArray());
                                 addUINode(node, instance, true);
                             }
@@ -263,7 +263,7 @@ public class GIXComponent<Model> {
                             raw_values.add(matching_GIX_attr.getValueObject(pending_actor, state, matching_GIX_attr.getExplicitClassPath(pending_actor)));
                         }
                     }
-                    System.out.printf("Calling (2nd pass) %s \n", pending_actor.name);
+//                    System.out.printf("Calling (2nd pass) %s \n", pending_actor.name);
                     Object instance = actor_constructor.constructor.newInstance(raw_values.toArray());
                     addUINode(pending_actor, instance, true);
                 } catch (Exception e) {
@@ -470,7 +470,7 @@ public class GIXComponent<Model> {
     }
 
     private static boolean invokeMethod(Object instance, Method[] methods, GIXAttr gixAttr) {
-        System.out.println("invokeMethod " + instance + " " + gixAttr.name_without_type);
+//        System.out.println("invokeMethod " + instance + " " + gixAttr.name_without_type);
         for (Method method : methods) {
             if (method.getName().equals(gixAttr.name_without_type)) {
                 // TODO support arguments.
