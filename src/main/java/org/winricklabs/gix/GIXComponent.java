@@ -29,7 +29,12 @@ import java.util.Iterator;
 
 public class GIXComponent<Model> extends Actor {
     private static final Array<GIXComponent<?>> instances = new Array<>(); // for easy hot reloading api
-    Array<String> class_paths = new Array<>(2);
+    private static final Array<String> class_paths = Array.with(
+                "com.badlogic.gdx.scenes.scene2d.ui.", // most common, so it's first as an optimization
+                "org.winricklabs.gix.",
+                "com.kotcrab.vis.ui.layout.",
+                "com.kotcrab.vis.ui.widget.",
+                "com.kotcrab.vis.ui.widget.spinner.");
     GIXParent parent;
     FileHandle file;
     FileHandle absolute_file_handle;
@@ -41,7 +46,7 @@ public class GIXComponent<Model> extends Actor {
     Model state = null;
     private long last_hot_reload_time_ms = 0;
 
-    public GIXComponent(GIXParent parent, FileHandle file, Array<String> additional_class_paths) {
+    public GIXComponent(GIXParent parent, FileHandle file) {
         this.parent = parent;
         this.file = file;
         if (dev_mode) {
@@ -49,21 +54,11 @@ public class GIXComponent<Model> extends Actor {
             absolute_file_handle = Gdx.files.absolute(Gdx.files.getLocalStoragePath() + "/assets/" + file.path());
         }
         data = file.readString();
-        class_paths.addAll(
-                "org.winricklabs.gix.",
-                "com.kotcrab.vis.ui.layout.",
-                "com.kotcrab.vis.ui.widget.",
-                "com.kotcrab.vis.ui.widget.spinner.",
-                "com.badlogic.gdx.scenes.scene2d.ui."
-        );
-        if (additional_class_paths != null) {
-            class_paths.addAll(additional_class_paths);
-        }
         instances.add(this);
     }
 
-    public GIXComponent(GIXParent parent, FileHandle file) {
-        this(parent, file, null);
+    public static void addComponentClassPath(String path) {
+        class_paths.add(path);
     }
 
     GIXComponent<Model> withState(Model state) {
