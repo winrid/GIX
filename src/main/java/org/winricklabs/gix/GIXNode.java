@@ -69,7 +69,6 @@ public class GIXNode {
 
     void expandLoops() {
         this.children = this.getExpandedChildren();
-        System.out.printf("x");
     }
 
     private Array<GIXNode> getExpandedChildren() {
