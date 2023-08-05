@@ -53,15 +53,10 @@ public class GIXNode {
     }
 
     void iterate(Callback<GIXNode> callback) {
-        LinkedList<GIXNode> nodes = new LinkedList<>();
-        nodes.add(this);
-        while (!nodes.isEmpty()) {
-            GIXNode next = nodes.pop();
-            callback.call(next);
-            if (next.children != null) {
-                for (GIXNode node : next.children) {
-                    nodes.add(node);
-                }
+        callback.call(this);
+        if (this.children != null) {
+            for (GIXNode node : this.children) {
+                node.iterate(callback);
             }
         }
     }
