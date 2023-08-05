@@ -29,11 +29,11 @@ import java.util.Iterator;
 public class GIXComponent<Model> extends Actor {
     private static final Array<GIXComponent<?>> instances = new Array<>(); // for easy hot reloading api
     private static final Array<String> class_paths = Array.with(
-                "com.badlogic.gdx.scenes.scene2d.ui.", // most common, so it's first as an optimization
-                "com.winricklabs.gix.",
-                "com.kotcrab.vis.ui.layout.",
-                "com.kotcrab.vis.ui.widget.",
-                "com.kotcrab.vis.ui.widget.spinner.");
+            "com.badlogic.gdx.scenes.scene2d.ui.", // most common, so it's first as an optimization
+            "com.winricklabs.gix.",
+            "com.kotcrab.vis.ui.layout.",
+            "com.kotcrab.vis.ui.widget.",
+            "com.kotcrab.vis.ui.widget.spinner.");
     GIXParent parent;
     FileHandle file;
     FileHandle absolute_file_handle;
@@ -195,11 +195,8 @@ public class GIXComponent<Model> extends Actor {
                                 // target.parent is like "<Table>"
                                 // so target.parent.ui_instance is for ex a gdx Table instance
                                 // we are calling the method "row" parsed from ":row>"
-                                if (dev_mode) {
-                                    // OPTIMIZATION
-                                    // we only do this to check if the method exists before invoking. we don't need to do it in prod.
-                                    target.parent.ui_instance.getClass().getMethod(node.target.method.getName());
-                                }
+                                // This looks like a getter, but it is needed for the next invoke() call.
+                                target.parent.ui_instance.getClass().getMethod(node.target.method.getName());
                                 node.setUIInstance(node.target.method.invoke(target.parent.ui_instance), actorsById);
                                 break;
                             } catch (NoSuchMethodException ignored) {
