@@ -165,4 +165,4 @@ I offer paid development support and feature/bugfix priority. Contact: winrid [a
 
 ## License
 
-MIT
+Apache-2.0
