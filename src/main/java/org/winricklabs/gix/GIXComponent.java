@@ -57,8 +57,8 @@ public class GIXComponent<Model> extends Actor {
         instances.add(this);
     }
 
-    public static void addComponentClassPath(String path) {
-        class_paths.add(path);
+    public static void addComponentClassPaths(String... paths) {
+        class_paths.addAll(paths);
     }
 
     GIXComponent<Model> withState(Model state) {

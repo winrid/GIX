@@ -89,7 +89,7 @@ public class TodoApp extends ApplicationAdapter {
     public void create() {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
-        GIXComponent.addComponentClassPath('com.yourapp.components'); // what package will your components be in?
+        GIXComponent.addComponentClassPaths('com.yourapp.components'); // what package will your components be in?
         GIXComponent.setDevMode(true); // for hot reload
         new TodoComponent(new GIXParent(stage));
     }
