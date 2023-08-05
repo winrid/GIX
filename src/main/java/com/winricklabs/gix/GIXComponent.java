@@ -171,10 +171,13 @@ public class GIXComponent<Model> extends Actor {
                 }
             });
 
+            if (dev_mode && gix_root == null) {
+                return null; // don't crash in dev mode - wait for content
+            }
+
             // find loops, expand.
             gix_root.expandLoops();
 
-//            System.out.println("parse time: " + (System.currentTimeMillis() - start));
             start = System.currentTimeMillis();
             Array<GIXNode> pending_actors_nodes = new Array<>(0);
             // we rarely need to store constructors on each node, so we use a separate map, vs the overhead of the property on every GSXNode.
@@ -273,7 +276,6 @@ public class GIXComponent<Model> extends Actor {
                     throw new NodeException(pending_actor.domNode, e);
                 }
             }
-
         } catch (NodeException e) {
             if (dev_mode) {
                 Label.LabelStyle labelStyle = new Label.LabelStyle(new BitmapFont(), Color.RED);
