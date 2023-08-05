@@ -47,8 +47,7 @@ public class TodoComponent extends GIXComponent<TodoComponent.TodoState> {
 
     public TodoComponent(GIXParent parent) {
         super(parent, Gdx.files.internal("todo.html"));
-        withState(new TodoState());
-        parse();
+        setState(new TodoState());
     }
 
     public class TodoState {
@@ -90,6 +89,7 @@ public class TodoApp extends ApplicationAdapter {
     public void create() {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
+        GIXComponent.addComponentClassPath('com.yourapp.components'); // what package will your components be in?
         GIXComponent.setDevMode(true); // for hot reload
         new TodoComponent(new GIXParent(stage));
     }
@@ -114,8 +114,7 @@ public class ChildComponent extends GIXComponent<ChildComponent.ChildState> {
 
     public ChildComponent(GIXParent parent) {
         super(parent, Gdx.files.internal("child.html"));
-        withState(new ChildState());
-        parse();
+        setState(new ChildState());
     }
 
     public ChildComponent(GIXNode parent) {
@@ -125,10 +124,14 @@ public class ChildComponent extends GIXComponent<ChildComponent.ChildState> {
     public class ChildState {
 
     }
+    
+    public void setCustomData(boolean someData) {
+        // do something with data from parent
+    }
 }
 ```
 
-Now you can use `<ChildComponent></ChildComponent>` in the parent.
+Now you can use `<ChildComponent customData="true"></ChildComponent>` in the parent.
 
 ## How it Works
 
