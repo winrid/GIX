@@ -61,18 +61,18 @@ public class GIXComponent<Model> extends Actor {
         class_paths.addAll(paths);
     }
 
-    GIXComponent<Model> withState(Model state) {
+    public GIXComponent<Model> withState(Model state) {
         this.state = state;
         return this;
     }
 
-    GIXComponent<Model> setState(Model state) {
+    public GIXComponent<Model> setState(Model state) {
         this.state = state;
         parse();
         return this;
     }
 
-    static void setDevMode(boolean dev_mode) {
+    public static void setDevMode(boolean dev_mode) {
         GIXComponent.dev_mode = dev_mode;
     }
 
@@ -101,7 +101,7 @@ public class GIXComponent<Model> extends Actor {
         }
     }
 
-    GIXComponent<Model> parse() {
+    public GIXComponent<Model> parse() {
         long start = System.currentTimeMillis();
         Parser parser = Parser.htmlParser();
         parser.setTrackPosition(dev_mode);
@@ -509,11 +509,11 @@ public class GIXComponent<Model> extends Actor {
         return false;
     }
 
-    Actor getRoot() {
+    public Actor getRoot() {
         return tree;
     }
 
-    Actor getById(String id) {
+    public Actor getById(String id) {
         return actorsById.get(id);
     }
 }
