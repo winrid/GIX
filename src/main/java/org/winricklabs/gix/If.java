@@ -1,4 +1,4 @@
-package org.winricklabs.gix;
+package com.winricklabs.gix;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;

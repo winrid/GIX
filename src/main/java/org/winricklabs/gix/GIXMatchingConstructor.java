@@ -1,4 +1,4 @@
-package org.winricklabs.gix;
+package com.winricklabs.gix;
 
 import com.badlogic.gdx.utils.Array;
 

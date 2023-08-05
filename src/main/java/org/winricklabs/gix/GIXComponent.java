@@ -1,4 +1,4 @@
-package org.winricklabs.gix;
+package com.winricklabs.gix;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -31,7 +31,7 @@ public class GIXComponent<Model> extends Actor {
     private static final Array<GIXComponent<?>> instances = new Array<>(); // for easy hot reloading api
     private static final Array<String> class_paths = Array.with(
                 "com.badlogic.gdx.scenes.scene2d.ui.", // most common, so it's first as an optimization
-                "org.winricklabs.gix.",
+                "com.winricklabs.gix.",
                 "com.kotcrab.vis.ui.layout.",
                 "com.kotcrab.vis.ui.widget.",
                 "com.kotcrab.vis.ui.widget.spinner.");
