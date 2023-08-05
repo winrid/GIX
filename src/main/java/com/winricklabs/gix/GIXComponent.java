@@ -188,7 +188,15 @@ public class GIXComponent<Model> extends Actor {
                         // can't assume it's one level up - for example where a <Repeat> is between content and <Table>
                         while (true) {
                             try {
-                                target.parent.ui_instance.getClass().getMethod(node.target.method.getName());
+                                // target is like "<Table:row>"
+                                // target.parent is like "<Table>"
+                                // so target.parent.ui_instance is for ex a gdx Table instance
+                                // we are calling the method "row" parsed from ":row>"
+                                if (dev_mode) {
+                                    // OPTIMIZATION
+                                    // we only do this to check if the method exists before invoking. we don't need to do it in prod.
+                                    target.parent.ui_instance.getClass().getMethod(node.target.method.getName());
+                                }
                                 node.setUIInstance(node.target.method.invoke(target.parent.ui_instance), actorsById);
                                 break;
                             } catch (NoSuchMethodException ignored) {
