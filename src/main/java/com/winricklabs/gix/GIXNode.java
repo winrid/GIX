@@ -7,7 +7,6 @@ import com.badlogic.gdx.utils.ObjectMap;
 import org.jsoup.nodes.Node;
 
 import java.util.LinkedList;
-import java.util.List;
 
 public class GIXNode {
     final private Object ui_state;
