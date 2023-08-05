@@ -32,8 +32,10 @@ Let's write our template:
         </Repeat>
     </VisTable>
     <VisTable>
-        <VisTextField id="field"></VisTextField>
-        <VisTextButton new="Add" addListener={addTodoListener}></VisTextButton>
+        <VisTable:row>
+            <VisTextField id="field"></VisTextField>
+            <VisTextButton new="Add" addListener={addTodoListener}></VisTextButton>
+        </VisTable:row>
     </VisTable>
 </VisWindow>
 ```
