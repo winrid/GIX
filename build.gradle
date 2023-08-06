@@ -21,6 +21,7 @@ repositories {
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+    testImplementation 'com.google.code.gson:gson:2.10.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
     implementation 'org.jsoup:jsoup:1.16.1'
@@ -38,4 +39,5 @@ tasks.named('test', Test) {
     useJUnitPlatform()
 
     maxHeapSize = '1G'
+    workingDir = new File("src/test/resources")
 }

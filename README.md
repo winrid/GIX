@@ -150,6 +150,84 @@ Now you can use `<ChildComponent customData="true"></ChildComponent>` in the par
 
 The library is not yet on Maven. Soon! "Statically link" it :)
 
+## Documentation
+
+### Constructor Args
+
+Constructor arguments are invoked this way:
+
+    <ConstructorTestingWidget new="true" id="single-constructor-arg"></ConstructorTestingWidget>
+
+Constructor params must be first.
+
+You can also have multiple parameters:
+
+    <ConstructorTestingWidget new:testArgA="true" new:testArgB="true" id="multi-constructor-arg"></ConstructorTestingWidget>
+
+### Method Arguments
+
+Let's say I have a `Widget` with a `setLeft(int)` method. I could call it these ways:
+
+    <Widget left="0">
+    <Widget setLeft="0">
+
+If the method takes no arguments, like `goLeft()` then we can just do:
+
+    <Widget goLeft>
+
+### Supported Widgets
+
+All widgets in LibGDX Scene2D and vis-ui should be supported, and if not it is a bug. Custom widgets/components
+are also supported.
+
+### Table Rows
+
+AKA calling a method on a component that returns an actor that child components can be added to.
+
+Table has a `Actor row()` method, so we can do:
+
+    <Table>
+        <Table:row>
+            <Label new="Hi!"></Label>
+        </Table:row>
+    </Table>
+
+### Dev Mode
+
+GIX reads your templates via an absolute path to make dev mode work without making you setup
+hot reloading in libgdx. See the `setDevMode` and `tickComponents` methods above.
+
+When the templates change it re-renders them with the current state. So, you can enter
+input in your UI, navigate it, change things, and write your templates as you go.
+
+For this to work you should probably define your app state objects and components first to limit context switching,
+and then go through and write your templates.
+
+You can take this a step further and make your components' Java code hot reloadable too by setting up LibGDX
+hot reloading.
+
+### Toggle "debug" Layout Boxes on The Fly
+
+We can enable debug mode in live dev mode by just adding:
+
+    <Table debug>
+
+The `debug` attribute where we want.
+
+### Performance
+
+`setState` re-creates the whole UI with the given state. This would be slow if you have a large UI (hundreds/thousands of elements in a component).
+The suggested course of action in this case is to use GIX to do the layout and initial rendering, and then
+add your event handlers and reactively update elements manually like you would with normal Scene2D.
+
+Also ensure you have dev mode off in prod as currently it hits the file system on the main thread twice a second.
+
+### Gotchas
+
+#### My Component is not showing, does this crap even work?
+
+Try `setFillParent="true"` on your root table. Also try `debug`.
+
 ## Contributing
 
 Contributions welcome! Some low-hanging fruit I could get help with:

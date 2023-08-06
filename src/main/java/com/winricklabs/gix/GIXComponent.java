@@ -470,6 +470,9 @@ public class GIXComponent<Model> extends Actor {
     private void invokeSettersAndMethods(GIXNode node, Object instance, Array<GIXAttr> attrs) throws IllegalAccessException {
         Method[] methods = instance.getClass().getMethods();
         for (GIXAttr GIXAttr : attrs) {
+            if (GIXAttr.name.equals("id")) {
+                continue; // internal usage
+            }
             if (!invokeMethod(instance, methods, GIXAttr)) {
                 if (!invokeSetter(node, state, instance, methods, GIXAttr)) {
                     System.err.printf("Warning! Did not find method %s to invoke with value %s. Note that we don't support setters with more than one argument.\n", GIXAttr.name_without_type, GIXAttr.getRawValue());
@@ -520,7 +523,7 @@ public class GIXComponent<Model> extends Actor {
         return false;
     }
 
-    public Actor getRoot() {
+    public WidgetGroup getRoot() {
         return tree;
     }
 
