@@ -57,7 +57,12 @@ public class GIXComponent<Model> extends Actor {
     }
 
     public static void addComponentClassPaths(String... paths) {
-        class_paths.addAll(paths);
+        for (String path : paths) {
+            if (!path.endsWith(".")) {
+                path = path + "."; // OPT so we don't have to add . every time we lookup
+            }
+            class_paths.add(path);
+        }
     }
 
     public GIXComponent<Model> withState(Model state) {
