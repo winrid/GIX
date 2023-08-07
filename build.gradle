@@ -35,7 +35,7 @@ publishing {
     }
 }
 
-tasks.named('test', Test) {
+test {
     useJUnitPlatform()
 
     maxHeapSize = '1G'
