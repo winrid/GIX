@@ -1,7 +1,12 @@
 package com.winricklabs.gix;
 
 
+import com.badlogic.gdx.utils.ObjectMap;
+import org.apache.commons.lang3.StringUtils;
+
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+
 
 public class GIXAttr {
     final private Object ui_data;
@@ -67,7 +72,7 @@ public class GIXAttr {
         return this.explicit_class_path;
     }
 
-    Object getValueObject(GIXNode from_node, Object ui_data, String desired_class_path) throws IllegalAccessException {
+    Object getValueObject(GIXNode from_node, Object ui_data, String desired_class_path) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NoSuchFieldException {
         switch (desired_class_path) {
             case "boolean":
             case "java.lang.Boolean":
@@ -94,12 +99,11 @@ public class GIXAttr {
         }
     }
 
-    private Object getValueFromModel(GIXNode from_node, Object ui_data) throws IllegalAccessException {
+    private Object getValueFromModel(GIXNode from_node, Object ui_data) throws IllegalAccessException, NoSuchFieldException {
         if (ui_data == null) { // ui data will never be null and from node not be null, so this is a safe check/optimization
             return value;
         }
         if (value.startsWith("{") && value.endsWith("}")) {
-            FieldHelper fieldHelper = new FieldHelper();
             // TODO optimize string replacement
             String without_brackets = value.replace("{", "").replace("}", "");
             String[] path = without_brackets.split("\\.");
@@ -113,20 +117,69 @@ public class GIXAttr {
                             path_without_first.append(".");
                         }
                     }
-                    return fieldHelper.getFieldValue(from_context, path_without_first.toString());
+                    return getNestedProperty(from_context, path_without_first.toString());
                 } else {
                     return from_context;
                 }
             }
-            return fieldHelper.getFieldValue(ui_data, without_brackets);
+            return getNestedProperty(ui_data, without_brackets);
         }
         return value;
+    }
+
+    private static Object getNestedProperty(Object object, String path_string) throws NoSuchFieldException, IllegalAccessException {
+        String[] path = path_string.split("\\.");
+        for (String part : path) {
+            object = getFieldValue(object, part);
+        }
+        return object;
+    }
+
+
+    private static Object getFieldValue(Object root, String fieldName) throws NoSuchFieldException, IllegalAccessException {
+        Class<?> clazz = root.getClass();
+        Field field = resolveField(clazz, fieldName);
+        // have to restore the old value as it's only
+        // for the Field object, not for the field itself
+        return field.get(root);
+    }
+
+    private static Field resolveField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+        Field field;
+        try {
+            field = clazz.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException nsfe) {
+            Class<?> sc = clazz.getSuperclass();
+            field = resolveField(sc, fieldName);
+        }
+        field.setAccessible(true); // Lets you work with private fields. You do not
+        return field;
+    }
+
+    private static Class<?> getPropertyType(Class<?> clazz, String fieldName) {
+        final String[] fieldNames = fieldName.split("\\.", -1);
+        //if using dot notation to navigate for classes
+        if (fieldNames.length > 1) {
+            final String firstProperty = fieldNames[0];
+            final String otherProperties =
+                    StringUtils.join(fieldNames, '.', 1, fieldNames.length);
+            final Class<?> firstPropertyType = getPropertyType(clazz, firstProperty);
+            return getPropertyType(firstPropertyType, otherProperties);
+        }
+
+        try {
+            return clazz.getDeclaredField(fieldName).getType();
+        } catch (final NoSuchFieldException e) {
+            if (!clazz.equals(Object.class)) {
+                return getPropertyType(clazz.getSuperclass(), fieldName);
+            }
+            throw new IllegalStateException(e);
+        }
     }
 
     private Class<?> getClassFromModel(GIXNode from_node, Object ui_data) throws IllegalAccessException {
         // TODO consolidate with getValueFromModel
         if (value.startsWith("{") && value.endsWith("}")) {
-            FieldHelper fieldHelper = new FieldHelper();
             // TODO optimize string replacement
             String without_brackets = value.replace("{", "").replace("}", "");
             String[] path = without_brackets.split("\\.");
@@ -140,14 +193,48 @@ public class GIXAttr {
                             path_without_first.append(".");
                         }
                     }
-                    return fieldHelper.getFieldClass(from_context, path_without_first.toString());
+                    return getPropertyType(from_context.getClass(), path_without_first.toString());
                 } else {
                     return from_context.getClass();
                 }
             }
-            return fieldHelper.getFieldClass(ui_data, without_brackets);
+            return getPropertyType(ui_data.getClass(), without_brackets);
         }
         return value.getClass();
+    }
+
+
+    private static class PrimitiveTypeMapper {
+        private final ObjectMap<String, String> mapping = new ObjectMap<>();
+        private static PrimitiveTypeMapper instance;
+
+        PrimitiveTypeMapper() {
+            mapping.put("boolean", "java.lang.Boolean");
+            mapping.put("integer", "java.lang.Integer");
+            mapping.put("double", "java.lang.Double");
+            mapping.put("float", "java.lang.Float");
+        }
+
+        public static PrimitiveTypeMapper getInstance() {
+            if (instance == null) {
+                instance = new PrimitiveTypeMapper();
+            }
+            return instance;
+        }
+
+        public Boolean maps(String from, String to) {
+            PrimitiveTypeMapper primitiveTypeMapper = PrimitiveTypeMapper.getInstance();
+            String actual_to = primitiveTypeMapper.mapping.get(from);
+            if (actual_to != null) {
+                return actual_to.equals(from);
+            }
+            String actual_to_swapped = primitiveTypeMapper.mapping.get(to);
+            if (actual_to_swapped != null) {
+                return actual_to_swapped.equals(from);
+            }
+            return null;
+        }
+
     }
 
     boolean matchesType(GIXNode from_node, String other_class_path) throws IllegalAccessException {
@@ -157,15 +244,9 @@ public class GIXAttr {
                     || (other_class_path.equals("java.lang.CharSequence") && this.explicit_class_path.equals("java.lang.String"))) {
                 return true;
             }
-            switch (other_class_path) {
-                case "boolean":
-                    return explicit_class_path.equals("java.lang.Boolean");
-                case "int":
-                    return explicit_class_path.equals("java.lang.Integer");
-                case "double":
-                    return explicit_class_path.equals("java.lang.Double");
-                case "float":
-                    return explicit_class_path.equals("java.lang.Float");
+            Boolean does_map_primitive = PrimitiveTypeMapper.getInstance().maps(other_class_path, explicit_class_path);
+            if (does_map_primitive != null) {
+                return does_map_primitive;
             }
             try {
                 // todo optimize
@@ -215,73 +296,4 @@ public class GIXAttr {
         return this.value;
     }
 
-
-    // TODO the methods here should be able to be static so we don't have to
-    // create a new instance of "FieldHelper"
-    private static class FieldHelper {
-
-        /**
-         * get a Field including superclasses
-         */
-        public Field getField(Class<?> c, String fieldName) {
-            Field result = null;
-            if (c == null) {
-                return null;
-//                throw new RuntimeException("Could not find \"" + fieldName + "\" in model");
-            }
-            try {
-                result = c.getDeclaredField(fieldName);
-            } catch (NoSuchFieldException nsfe) {
-                Class<?> sc = c.getSuperclass();
-                result = getField(sc, fieldName);
-            }
-            return result;
-        }
-
-        /**
-         * set a field Value by name
-         */
-        public void setFieldValue(Object target, String fieldName, Object value) throws IllegalAccessException {
-            Class<? extends Object> c = target.getClass();
-            Field field = getField(c, fieldName);
-            field.setAccessible(true);
-            // beware of ...
-            // http://docs.oracle.com/javase/tutorial/reflect/member/fieldTrouble.html
-            field.set(this, value);
-        }
-
-        /**
-         * get a field Value by name
-         */
-        public Object getFieldValue(Object target, String fieldName) throws IllegalAccessException {
-            Class<? extends Object> c = target.getClass();
-            Field field = getField(c, fieldName);
-            if (field != null) {
-                field.setAccessible(true);
-                Object result = field.get(target);
-                return result;
-            }
-            return null;
-        }
-
-        /**
-         * get a field Value by name
-         */
-        public Class<?> getFieldClass(Object target, String fieldName) throws IllegalAccessException {
-            Class<? extends Object> c = target.getClass();
-            Field field = getField(c, fieldName);
-            if (field != null) {
-                field.setAccessible(true);
-                Object value = field.get(target);
-                if (value != null) {
-                    return value.getClass();
-                } else {
-                    Class<?> type = field.getType();
-                    return type;
-                }
-            }
-            return null;
-        }
-
-    }
 }

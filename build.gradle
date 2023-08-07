@@ -25,6 +25,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
     implementation 'org.jsoup:jsoup:1.16.1'
+    implementation 'org.apache.commons:commons-lang3:3.13.0'
 }
 
 publishing {

@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 
 import org.jsoup.nodes.Node;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 
 public class GIXNode {
@@ -77,14 +78,16 @@ public class GIXNode {
                 if (attr.name.equals("with")) { // still sorry
                     try {
                         data = (Array<?>) attr.getValueObject(this, ui_state, "dynamic");
-                    } catch (IllegalAccessException e) {
+                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException |
+                             NoSuchFieldException e) {
                         throw new RuntimeException(e);
                     }
                 }
                 if (attr.name.equals("as")) { // still very sorry
                     try {
                         as = (String) attr.getValueObject(this, ui_state, "java.lang.String");
-                    } catch (IllegalAccessException e) {
+                    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException |
+                             NoSuchFieldException e) {
                         throw new RuntimeException(e);
                     }
                 }

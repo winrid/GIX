@@ -22,14 +22,18 @@ public class IfStatementTest {
             super(parent, new FileHandle(new File("if_test.html").getAbsolutePath()));
         }
 
-        static class TestingComponentData {
-            public boolean true_primitive = true;
-            public Boolean true_obj = Boolean.TRUE;
-            public Boolean true_obj_null = null;
-            public boolean false_primitive = false;
+        public static class TestingComponentData {
+            public InnerData data = new InnerData(); // testing dot notation
 
             public TestingComponentData() {
 
+            }
+
+            public class InnerData {
+                public boolean true_primitive = true;
+                public Boolean true_obj = Boolean.TRUE;
+                public Boolean true_obj_null = null;
+                public boolean false_primitive = false;
             }
         }
     }
