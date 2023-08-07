@@ -62,7 +62,7 @@ public class GIXAttr {
                     explicit_class_path = clazz.getName();
                 }
             }
-            System.out.println("explicit_class_path is " + explicit_class_path);
+//            System.out.println("explicit_class_path is " + explicit_class_path);
         }
         return this.explicit_class_path;
     }
