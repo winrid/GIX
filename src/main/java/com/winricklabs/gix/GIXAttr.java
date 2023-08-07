@@ -54,11 +54,10 @@ public class GIXAttr {
         if (explicit_class_path == null && value.startsWith("{") && value.endsWith("}")) {
             // TODO optimize - don't need actual value, just type.
             // or we can cache value, depending on how reactive stuff will work.
-            Object model_value = getValueFromModel(from_node, ui_data);
-            if (model_value != null) {
-                Class<?> clazz = model_value.getClass();
+            Class<?> clazz = getClassFromModel(from_node, ui_data);
+            if (clazz != null) {
                 if (clazz.isAnonymousClass()) { // for event handlers in model
-                    explicit_class_path = model_value.getClass().getAnnotatedSuperclass().getType().getTypeName();
+                    explicit_class_path = clazz.getAnnotatedSuperclass().getType().getTypeName();
                 } else {
                     explicit_class_path = clazz.getName();
                 }
@@ -122,6 +121,33 @@ public class GIXAttr {
             return fieldHelper.getFieldValue(ui_data, without_brackets);
         }
         return value;
+    }
+
+    private Class<?> getClassFromModel(GIXNode from_node, Object ui_data) throws IllegalAccessException {
+        // TODO consolidate with getValueFromModel
+        if (value.startsWith("{") && value.endsWith("}")) {
+            FieldHelper fieldHelper = new FieldHelper();
+            // TODO optimize string replacement
+            String without_brackets = value.replace("{", "").replace("}", "");
+            String[] path = without_brackets.split("\\.");
+            Object from_context = from_node.getContextToRoot(path[0]);
+            if (from_context != null) {
+                if (path.length > 1) { // optimization
+                    StringBuilder path_without_first = new StringBuilder();
+                    for (int i = 1; i < path.length; i++) {
+                        path_without_first.append(path[i]);
+                        if (i != path.length - 1) {
+                            path_without_first.append(".");
+                        }
+                    }
+                    return fieldHelper.getFieldClass(from_context, path_without_first.toString());
+                } else {
+                    return from_context.getClass();
+                }
+            }
+            return fieldHelper.getFieldClass(ui_data, without_brackets);
+        }
+        return value.getClass();
     }
 
     boolean matchesType(GIXNode from_node, String other_class_path) throws IllegalAccessException {
@@ -234,6 +260,25 @@ public class GIXAttr {
                 field.setAccessible(true);
                 Object result = field.get(target);
                 return result;
+            }
+            return null;
+        }
+
+        /**
+         * get a field Value by name
+         */
+        public Class<?> getFieldClass(Object target, String fieldName) throws IllegalAccessException {
+            Class<? extends Object> c = target.getClass();
+            Field field = getField(c, fieldName);
+            if (field != null) {
+                field.setAccessible(true);
+                Object value = field.get(target);
+                if (value != null) {
+                    return value.getClass();
+                } else {
+                    Class<?> type = field.getType();
+                    return type;
+                }
             }
             return null;
         }
