@@ -148,7 +148,9 @@ Now you can use `<ChildComponent customData="true"></ChildComponent>` in the par
 
 ## Installation
 
-The library is not yet on Maven. Soon! "Statically link" it :)
+You can install the library from Maven Central:
+
+    implementation 'com.winricklabs:gix:1.0.1'
 
 ## Documentation
 
