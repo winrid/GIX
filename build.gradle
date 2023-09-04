@@ -1,6 +1,8 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'signing'
+    id('io.github.gradle-nexus.publish-plugin') version '1.1.0'
 }
 
 group = 'com.winricklabs'
@@ -28,12 +30,52 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.13.0'
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {  //only for users registered in Sonatype after 24 Feb 2021
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+        }
+    }
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            from components.java
+            from(components.java)
+            pom {
+                name = 'gix'
+                description = 'A component-based library to write LibGDX Scene2D UIs in XHTML, with hot reloading.'
+                url = 'https://github.com/winrid/gix'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'winrid'
+                        name = 'Devon Winrick'
+                    }
+                }
+                scm {
+                    url = 'https://github.com/winrid/gix'
+                    connection = 'scm:git://github.com:winrid/GIX.git'
+                    developerConnection = 'scm:git://github.com:winrid/GIX.git'
+                }
+            }
         }
     }
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }
 
 test {
